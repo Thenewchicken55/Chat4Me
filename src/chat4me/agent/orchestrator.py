@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import asyncio
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 from loguru import logger
 
@@ -13,7 +13,7 @@ from chat4me.llm.prompts import SYSTEM_PROMPT, build_chat_prompt, parse_response
 from chat4me.screen.capture import capture_window, save_screenshot
 from chat4me.screen.window import WindowInfo, find_window
 from chat4me.vision.analyzer import ScreenState, analyze
-from chat4me.vision.ocr import ocr_image_to_data, is_tesseract_available
+from chat4me.vision.ocr import is_tesseract_available, ocr_image_to_data
 
 
 @dataclass
@@ -42,7 +42,14 @@ class Orchestrator:
         if window is None:
             logger.warning("Window '{target}' not found", target=target)
         else:
-            logger.debug("Found window: {title} at ({left},{top}) {width}x{height}", title=window.title, left=window.left, top=window.top, width=window.width, height=window.height)
+            logger.debug(
+                "Found window: {title} at ({left},{top}) {width}x{height}",
+                title=window.title,
+                left=window.left,
+                top=window.top,
+                width=window.width,
+                height=window.height,
+            )
         return window
 
     async def _capture_and_analyze(self, window: WindowInfo) -> ScreenState:
@@ -66,7 +73,7 @@ class Orchestrator:
             return []
 
         old_lines = set(self.state.last_raw_text.split("\n"))
-        new_lines = [l for l in current.split("\n") if l and l not in old_lines]
+        new_lines = [line for line in current.split("\n") if line and line not in old_lines]
         self.state.last_raw_text = current
         return new_lines
 

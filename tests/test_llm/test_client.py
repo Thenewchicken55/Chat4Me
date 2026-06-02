@@ -1,7 +1,12 @@
 import pytest
 
 from chat4me.config import LLMConfig
-from chat4me.llm.client import AnthropicClient, OllamaClient, OpenAIClient, create_client
+from chat4me.llm.client import (
+    AnthropicClient,
+    OllamaClient,
+    OpenAIClient,
+    create_client,
+)
 
 
 @pytest.fixture

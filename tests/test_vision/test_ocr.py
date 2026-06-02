@@ -1,6 +1,5 @@
 from unittest.mock import MagicMock, patch
 
-import pytest
 from PIL import Image
 
 from chat4me.vision.ocr import is_tesseract_available, ocr_image, ocr_image_to_data

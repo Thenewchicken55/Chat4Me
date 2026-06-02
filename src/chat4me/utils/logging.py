@@ -10,7 +10,10 @@ def setup_logging(level: str = "INFO", log_file: str | None = "chat4me.log") -> 
     logger.add(
         sys.stderr,
         level=level.upper(),
-        format="<green>{time:HH:mm:ss}</green> | <level>{level:<7}</level> | <cyan>{module}</cyan> | <level>{message}</level>",
+        format=(
+            "<green>{time:HH:mm:ss}</green> | <level>{level:<7}</level>"
+            " | <cyan>{module}</cyan> | <level>{message}</level>"
+        ),
         colorize=True,
     )
 

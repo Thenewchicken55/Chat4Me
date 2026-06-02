@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import pyautogui
-from pynput.mouse import Button, Controller as MouseController
+from pynput.mouse import Controller as MouseController
 
 _pynput_mouse = MouseController()
 

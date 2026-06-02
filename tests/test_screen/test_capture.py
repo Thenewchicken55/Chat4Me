@@ -1,7 +1,6 @@
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
-import numpy as np
 from PIL import Image
 
 from chat4me.screen.capture import capture_region, capture_window, save_screenshot

@@ -1,6 +1,13 @@
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
-from chat4me.automation.mouse import click, click_center, double_click, get_position, move_to, scroll
+from chat4me.automation.mouse import (
+    click,
+    click_center,
+    double_click,
+    get_position,
+    move_to,
+    scroll,
+)
 
 
 @patch("chat4me.automation.mouse.pyautogui.click")

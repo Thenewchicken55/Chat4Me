@@ -1,7 +1,8 @@
 from __future__ import annotations
 
 import pyautogui
-from pynput.keyboard import Controller as KeyboardController, Key
+from pynput.keyboard import Controller as KeyboardController
+from pynput.keyboard import Key
 
 _kbd = KeyboardController()
 

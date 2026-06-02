@@ -1,9 +1,9 @@
 from pathlib import Path
 from typing import Literal
 
+import yaml
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
-import yaml
 
 
 class OllamaConfig(BaseSettings):

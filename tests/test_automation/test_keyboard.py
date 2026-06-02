@@ -1,6 +1,13 @@
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
-from chat4me.automation.keyboard import hotkey, press_enter, press_escape, press_key, type_and_send, type_text
+from chat4me.automation.keyboard import (
+    hotkey,
+    press_enter,
+    press_escape,
+    press_key,
+    type_and_send,
+    type_text,
+)
 
 
 @patch("chat4me.automation.keyboard.pyautogui.write")

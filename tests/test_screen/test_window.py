@@ -1,12 +1,13 @@
-from unittest.mock import MagicMock, patch
-
-import pytest
+from unittest.mock import patch
 
 from chat4me.screen.window import WindowInfo, find_window, list_windows
 
 
 class MockWin:
-    def __init__(self, title: str, visible: bool = True, width: int = 800, height: int = 600, left: int = 0, top: int = 0):
+    def __init__(
+        self, title: str, visible: bool = True,
+        width: int = 800, height: int = 600, left: int = 0, top: int = 0,
+    ):
         self.title = title
         self.visible = visible
         self.width = width
@@ -78,6 +79,6 @@ def test_window_info_named_tuple():
     assert wi.top == 20
     assert wi.width == 100
     assert wi.height == 200
-    left, top, right, bottom = wi.left, wi.top, wi.left + wi.width, wi.top + wi.height
+    _, _, right, bottom = wi.left, wi.top, wi.left + wi.width, wi.top + wi.height
     assert right == 110
     assert bottom == 220
