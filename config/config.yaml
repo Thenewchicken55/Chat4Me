@@ -1,0 +1,37 @@
+# Chat4Me Configuration
+# Copy this to config.local.yaml and override values as needed.
+
+app:
+  poll_interval: 2.0        # seconds between screen captures
+  cooldown_after_reply: 5.0 # seconds to wait after sending a message
+  max_consecutive_replies: 3
+  target_window: "Discord"  # window title substring to match
+
+screen:
+  capture_region: null      # null = full window; or [x, y, w, h]
+  scale_factor: 1.0         # downscale for OCR performance
+
+vision:
+  ocr_lang: "eng"
+  tesseract_cmd: null       # auto-detect; set path if needed
+
+llm:
+  backend: "ollama"         # "ollama" | "openai" | "anthropic"
+  ollama:
+    base_url: "http://localhost:11434"
+    model: "llama3.2-vision"
+  openai:
+    api_key: ""
+    model: "gpt-4o"
+  anthropic:
+    api_key: ""
+    model: "claude-3-5-sonnet-20241022"
+  system_prompt: |
+    You are a friendly, kind person chatting in a Discord server.
+    Be natural, concise, and human-like. Use casual language.
+    If someone asks you something, answer helpfully.
+    Don't reveal that you are an AI bot.
+
+logging:
+  level: "INFO"             # DEBUG | INFO | WARNING | ERROR
+  file: "chat4me.log"
