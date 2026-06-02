@@ -6,10 +6,13 @@ import signal
 import sys
 
 from loguru import logger
+from pynput import keyboard
 
 from chat4me.agent.orchestrator import Orchestrator
 from chat4me.config import Config
 from chat4me.utils.logging import setup_logging
+
+EMERGENCY_STOP_HOTKEY = "<ctrl>+<shift>+q"
 
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
@@ -63,6 +66,21 @@ def print_window_list() -> None:
         print(f"  {t}")
 
 
+def _print_emergency_banner() -> None:
+    line = "=" * 60
+    print()
+    print(line)
+    print("  ⚠  EMERGENCY STOP  ⚠")
+    print()
+    print(f"  Press  {EMERGENCY_STOP_HOTKEY.upper()}  at any time")
+    print("  to immediately stop the application.")
+    print()
+    print("  This will kill the agent, close the LLM client,")
+    print("  and release all input devices.")
+    print(line)
+    print()
+
+
 def main(argv: list[str] | None = None) -> int:
     args = parse_args(argv)
 
@@ -82,14 +100,22 @@ def main(argv: list[str] | None = None) -> int:
         config.logging.level = args.log_level
 
     setup_logging(level=config.logging.level, log_file=config.logging.file)
+
+    _print_emergency_banner()
+
     logger.info("Chat4Me starting — targeting window '{target}'", target=config.app.target_window)
 
     orchestrator = Orchestrator(config)
 
     shutdown_event = asyncio.Event()
+    _hotkey_listener: keyboard.GlobalHotKeys | None = None
 
     def handle_signal() -> None:
         logger.info("Shutdown signal received")
+        shutdown_event.set()
+
+    def handle_emergency_stop() -> None:
+        logger.error("EMERGENCY STOP triggered via hotkey ({key})", key=EMERGENCY_STOP_HOTKEY)
         shutdown_event.set()
 
     if sys.platform != "win32":
@@ -98,6 +124,12 @@ def main(argv: list[str] | None = None) -> int:
             loop.add_signal_handler(sig, handle_signal)
     else:
         loop = asyncio.new_event_loop()
+
+    _hotkey_listener = keyboard.GlobalHotKeys({
+        EMERGENCY_STOP_HOTKEY: handle_emergency_stop,
+    })
+    _hotkey_listener.daemon = True
+    _hotkey_listener.start()
 
     asyncio.set_event_loop(loop)
     try:
@@ -108,6 +140,8 @@ def main(argv: list[str] | None = None) -> int:
     except KeyboardInterrupt:
         pass
     finally:
+        if _hotkey_listener:
+            _hotkey_listener.stop()
         loop.run_until_complete(orchestrator.stop())
         loop.close()
 
