@@ -147,7 +147,7 @@ async def test_find_new_messages_empty_current(orchestrator):
 @pytest.mark.asyncio
 async def test_orchestrator_warns_no_tesseract(mock_check, orchestrator):
     mock_check.return_value = False
-    with patch("chat4me.agent.orchestrator.logger.warning") as mock_log:
+    with patch("chat4me.agent.orchestrator.logger.debug") as mock_log:
         orchestrator._find_target_window = AsyncMock(return_value=None)
         task = asyncio.create_task(orchestrator.run())
         await asyncio.sleep(0.1)

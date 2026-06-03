@@ -5,6 +5,7 @@ from loguru import logger
 
 
 def setup_logging(level: str = "INFO", log_file: str | None = "chat4me.log") -> None:
+    """Configure loguru: remove the default handler, add stderr + optional file."""
     logger.remove()
 
     logger.add(
@@ -30,4 +31,5 @@ def setup_logging(level: str = "INFO", log_file: str | None = "chat4me.log") -> 
 
 
 def get_logger() -> logger:
+    """Return the configured loguru logger instance."""
     return logger

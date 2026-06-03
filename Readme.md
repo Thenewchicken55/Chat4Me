@@ -28,6 +28,13 @@ A local-first AI agent that watches a Discord window, reads new messages, and re
 - [Tesseract OCR](https://github.com/tesseract-ocr/tesseract) (for text extraction)
 - An LLM backend (Ollama local, or OpenAI/Anthropic API key)
 
+### Ollama setup
+
+```bash
+ollama pull llama3.2-vision
+ollama serve
+```
+
 ## Installation
 
 ```bash

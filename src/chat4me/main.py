@@ -16,6 +16,7 @@ EMERGENCY_STOP_HOTKEY = "<ctrl>+<shift>+q"
 
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
+    """Parse CLI arguments and return a namespace of overrides."""
     parser = argparse.ArgumentParser(
         description="Chat4Me — local-first AI agent that chats for you in Discord",
     )
@@ -56,6 +57,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
 
 
 def print_window_list() -> None:
+    """Print all visible window titles to stdout."""
     from chat4me.screen.window import list_windows
     titles = list_windows()
     if not titles:
@@ -70,7 +72,14 @@ def _print_emergency_banner() -> None:
     line = "=" * 60
     print()
     print(line)
-    print("  ⚠  EMERGENCY STOP  ⚠")
+    print("  !!  EMERGENCY STOP  !!")
+    print()
+    print(f"  Press  {EMERGENCY_STOP_HOTKEY.upper()}  at any time")
+    print("  to immediately stop the application.")
+    print()
+    print("  This will kill the agent, close the LLM client,")
+    print("  and release all input devices.")
+    print(line)
     print()
     print(f"  Press  {EMERGENCY_STOP_HOTKEY.upper()}  at any time")
     print("  to immediately stop the application.")
@@ -82,6 +91,7 @@ def _print_emergency_banner() -> None:
 
 
 def main(argv: list[str] | None = None) -> int:
+    """Entry point — parses args, loads config, and starts the orchestrator loop."""
     args = parse_args(argv)
 
     if args.list_windows:

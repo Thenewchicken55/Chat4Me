@@ -7,6 +7,8 @@ from PIL import Image
 
 @dataclass
 class TextBlock:
+    """A single OCR-detected word with its position, size, and confidence."""
+
     text: str
     left: int
     top: int
@@ -17,19 +19,24 @@ class TextBlock:
 
 @dataclass
 class ScreenState:
+    """The full screen state extracted from a screenshot: OCR blocks and raw text."""
+
     text_blocks: list[TextBlock] = field(default_factory=list)
     raw_text: str = ""
 
     @property
     def has_content(self) -> bool:
+        """Return True when at least one text block was detected."""
         return len(self.text_blocks) > 0
 
     @property
     def all_text(self) -> str:
+        """Return the concatenated raw text of all detected blocks."""
         return self.raw_text
 
 
 def analyze(image: Image.Image, ocr_data: list[dict]) -> ScreenState:
+    """Convert raw OCR data into a ScreenState of TextBlocks and raw text."""
     blocks = []
     for item in ocr_data:
         blocks.append(
@@ -47,4 +54,11 @@ def analyze(image: Image.Image, ocr_data: list[dict]) -> ScreenState:
 
 
 def find_text_in_region(state: ScreenState, text_substring: str) -> list[TextBlock]:
+    """Find all text blocks whose text contains the given substring (case-insensitive)."""
     return [b for b in state.text_blocks if text_substring.lower() in b.text.lower()]
+
+
+def find_channels(state: ScreenState, window_width: int) -> list[TextBlock]:
+    """Find text blocks in the left sidebar region likely to be Discord channel names."""
+    sidebar_width = max(240, int(window_width * 0.15))
+    return [b for b in state.text_blocks if b.left < sidebar_width and b.confidence > 50]

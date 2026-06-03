@@ -4,6 +4,8 @@ import pygetwindow as gw
 
 
 class WindowInfo(NamedTuple):
+    """Describes a detected window's title and screen coordinates."""
+
     title: str
     left: int
     top: int
@@ -12,6 +14,7 @@ class WindowInfo(NamedTuple):
 
 
 def find_window(substring: str) -> WindowInfo | None:
+    """Find the first visible window whose title contains *substring*."""
     matches = [w for w in gw.getWindowsWithTitle(substring) if w.visible and w.width > 0]
     if not matches:
         return None
@@ -20,4 +23,5 @@ def find_window(substring: str) -> WindowInfo | None:
 
 
 def list_windows() -> list[str]:
+    """Return a sorted list of unique titles of all visible windows."""
     return list({w.title for w in gw.getAllWindows() if w.title.strip()})
