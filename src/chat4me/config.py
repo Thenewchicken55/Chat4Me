@@ -104,6 +104,15 @@ class Config(BaseSettings):
 
     @classmethod
     def load(cls, yaml_path: str | Path | None = None) -> "Config":
-        """Load config, optionally from a YAML path, falling back to defaults."""
-        cfg = cls.from_yaml(yaml_path) if yaml_path else cls()
-        return cfg
+        """Load config from YAML, env vars, and defaults.
+
+        If *yaml_path* is provided it is used; otherwise
+        ``config/config.yaml`` relative to the working directory
+        is tried as a fallback.
+        """
+        if yaml_path:
+            return cls.from_yaml(yaml_path)
+        default = Path("config/config.yaml")
+        if default.exists():
+            return cls.from_yaml(default)
+        return cls()
