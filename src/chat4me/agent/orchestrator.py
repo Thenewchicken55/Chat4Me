@@ -23,6 +23,7 @@ class AgentState:
     last_raw_text: str = ""
     consecutive_replies: int = 0
     running: bool = False
+    _tick_count: int = 0
 
 
 class Orchestrator:
@@ -192,6 +193,9 @@ class Orchestrator:
             )
 
         while self.state.running:
+            self.state._tick_count += 1
+            if self.state._tick_count % 15 == 0:
+                logger.info("Still watching — {tick} ticks elapsed", tick=self.state._tick_count)
             try:
                 await self._tick()
             except Exception:
