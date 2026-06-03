@@ -92,11 +92,13 @@ class Orchestrator:
         """Capture the screen, find a channel by name in the sidebar, and click it."""
         logger.info("Switching to channel: {channel}", channel=channel_name)
         img = capture_window(window)
-        ocr_data = ocr_image_to_data(
-            img,
-            lang=self.config.vision.ocr_lang,
-            tesseract_cmd=self.config.vision.tesseract_cmd,
-        )
+        ocr_data = []
+        if is_tesseract_available(self.config.vision.tesseract_cmd):
+            ocr_data = ocr_image_to_data(
+                img,
+                lang=self.config.vision.ocr_lang,
+                tesseract_cmd=self.config.vision.tesseract_cmd,
+            )
         state = analyze(img, ocr_data)
         channels = find_channels(state, window.width)
         target = None
