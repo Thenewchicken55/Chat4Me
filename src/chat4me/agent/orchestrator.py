@@ -186,7 +186,10 @@ class Orchestrator:
         logger.info("Orchestrator started — polling for window '{target}'", target=self.config.app.target_window)
 
         if not is_tesseract_available(self.config.vision.tesseract_cmd):
-            logger.debug("Tesseract not found — OCR disabled")
+            logger.warning(
+                "Tesseract not found — screen reading disabled. "
+                "Install it (see Readme.md) or this app won't detect any messages."
+            )
 
         while self.state.running:
             try:
