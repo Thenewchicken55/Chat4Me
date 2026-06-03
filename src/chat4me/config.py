@@ -11,7 +11,7 @@ class OllamaConfig(BaseSettings):
 
     model_config = SettingsConfigDict(env_prefix="CHAT4ME_LLM_OLLAMA_")
     base_url: str = "http://localhost:11434"
-    model: str = "llama3.2-vision"
+    model: str = "llama3.2"
 
 
 class OpenAIConfig(BaseSettings):

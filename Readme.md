@@ -31,7 +31,7 @@ A local-first AI agent that watches a Discord window, reads new messages, and re
 ### Ollama setup
 
 ```bash
-ollama pull llama3.2-vision
+ollama pull llama3.2
 ollama serve
 ```
 
@@ -85,7 +85,7 @@ Copy `config/config.yaml` to `config.local.yaml` and modify as needed:
 | `vision.tesseract_cmd` | `null` | Custom tesseract path (auto-detect if null) |
 | `llm.backend` | `"ollama"` | `ollama`, `openai`, or `anthropic` |
 | `llm.ollama.base_url` | `http://localhost:11434` | Ollama server URL |
-| `llm.ollama.model` | `llama3.2-vision` | Ollama model name |
+| `llm.ollama.model` | `llama3.2` | Ollama model name |
 | `logging.level` | `"INFO"` | Log level: DEBUG, INFO, WARNING, ERROR |
 
 All config values can be overridden with environment variables using the `CHAT4ME_` prefix (e.g., `CHAT4ME_APP_POLL_INTERVAL=3.0`).

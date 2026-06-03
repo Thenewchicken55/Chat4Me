@@ -19,7 +19,7 @@ llm:
   backend: "ollama"         # "ollama" | "openai" | "anthropic"
   ollama:
     base_url: "http://localhost:11434"
-    model: "llama3.2-vision"
+    model: "llama3.2"
   openai:
     api_key: ""
     model: "gpt-4o"

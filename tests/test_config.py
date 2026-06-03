@@ -16,7 +16,7 @@ def test_default_config_has_sane_values():
     assert cfg.vision.ocr_lang == "eng"
     assert cfg.llm.backend == "ollama"
     assert cfg.llm.ollama.base_url == "http://localhost:11434"
-    assert cfg.llm.ollama.model == "llama3.2-vision"
+    assert cfg.llm.ollama.model == "llama3.2"
     assert cfg.llm.openai.api_key == ""
     assert cfg.llm.anthropic.api_key == ""
     assert cfg.logging.level == "INFO"

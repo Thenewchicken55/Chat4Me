@@ -159,6 +159,8 @@ class Orchestrator:
 
         logger.info("New messages detected: {count}", count=len(new_messages))
 
+        new_messages = ["\n".join(new_messages)]
+
         if self.state.consecutive_replies >= self.config.app.max_consecutive_replies:
             logger.info("Max consecutive replies reached, waiting")
             await asyncio.sleep(self.config.app.cooldown_after_reply * 2)
