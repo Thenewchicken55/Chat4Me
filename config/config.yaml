@@ -13,7 +13,7 @@ screen:
 
 vision:
   ocr_lang: "eng"
-  tesseract_cmd: null       # auto-detect; set path if needed
+  tesseract_cmd: "C:\\Program Files\\Tesseract-OCR\\tesseract.exe"  # set path if not on PATH
 
 llm:
   backend: "ollama"         # "ollama" | "openai" | "anthropic"
