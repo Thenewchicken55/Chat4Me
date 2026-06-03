@@ -35,6 +35,12 @@ class ScreenState:
         return self.raw_text
 
 
+def filter_message_area(blocks: list[TextBlock], window_width: int) -> list[TextBlock]:
+    """Keep only text blocks from the main chat area, excluding the sidebar and top bar."""
+    sidebar_width = max(240, int(window_width * 0.15))
+    return [b for b in blocks if b.left >= sidebar_width and b.top > 50]
+
+
 def analyze(image: Image.Image, ocr_data: list[dict]) -> ScreenState:
     """Convert raw OCR data into a ScreenState of TextBlocks and raw text."""
     blocks = []

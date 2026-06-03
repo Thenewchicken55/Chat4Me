@@ -12,7 +12,7 @@ from chat4me.llm.client import LLMClient, create_client
 from chat4me.llm.prompts import SYSTEM_PROMPT, build_chat_prompt, parse_action, parse_response
 from chat4me.screen.capture import capture_window, save_screenshot
 from chat4me.screen.window import WindowInfo, find_window
-from chat4me.vision.analyzer import ScreenState, analyze, find_channels
+from chat4me.vision.analyzer import ScreenState, analyze, filter_message_area, find_channels
 from chat4me.vision.ocr import is_tesseract_available, ocr_image_to_data
 
 
@@ -72,6 +72,8 @@ class Orchestrator:
                 tesseract_cmd=self.config.vision.tesseract_cmd,
             )
         state = analyze(img, ocr_data)
+        state.text_blocks = filter_message_area(state.text_blocks, window.width)
+        state.raw_text = "\n".join(b.text for b in state.text_blocks)
         return state
 
     def _find_new_messages(self, state: ScreenState) -> list[str]:
@@ -156,8 +158,6 @@ class Orchestrator:
             return
 
         logger.info("New messages detected: {count}", count=len(new_messages))
-        for msg in new_messages:
-            self.memory.add_user_message(msg)
 
         if self.state.consecutive_replies >= self.config.app.max_consecutive_replies:
             logger.info("Max consecutive replies reached, waiting")
@@ -165,7 +165,16 @@ class Orchestrator:
             self.state.consecutive_replies = 0
             return
 
-        reply = await self._decide_reply(new_messages)
+        try:
+            reply = await self._decide_reply(new_messages)
+        except Exception:
+            logger.exception("LLM request failed — will retry on next tick")
+            await asyncio.sleep(self.config.app.poll_interval)
+            return
+
+        for msg in new_messages:
+            self.memory.add_user_message(msg)
+
         if reply:
             channel, message = parse_action(reply)
             if channel:
