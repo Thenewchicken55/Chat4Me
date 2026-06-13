@@ -1,0 +1,60 @@
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Tesseract OCR
+        run: |
+          choco install tesseract --pre --no-progress
+          echo "TESSERACT_PATH=C:\Program Files\Tesseract-OCR\tesseract.exe" >> $env:GITHUB_ENV
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+
+      - name: Set up Python 3.13
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Install dependencies
+        run: |
+          uv sync
+          uv pip install pyinstaller
+
+      - name: Build standalone executable
+        run: |
+          uv run pyinstaller ^
+            --onefile ^
+            --console ^
+            --name chat4me ^
+            --add-data "config/config.yaml;config" ^
+            --hidden-import pyautogui ^
+            --hidden-import pynput ^
+            --hidden-import mss ^
+            --hidden-import pytesseract ^
+            --hidden-import cv2 ^
+            --hidden-import pydantic ^
+            --hidden-import pydantic_settings ^
+            --hidden-import yaml ^
+            --hidden-import loguru ^
+            --hidden-import httpx ^
+            --hidden-import PIL ^
+            --collect-all chat4me ^
+            src/chat4me/main.py
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/chat4me.exe
+          generate_release_notes: true

@@ -22,9 +22,13 @@ A local-first AI agent that watches a Discord window, reads new messages, and re
 4. **Agent Orchestrator** — Runs the loop: capture → analyze → decide → reply
 5. **Automation** — Types and sends replies via `pyautogui` + `pynput`
 
+## Download (Windows)
+
+Grab a **standalone executable** from the [Releases](https://github.com/Thenewchicken55/Chat4Me/releases) page — no Python needed. You'll still need [Tesseract OCR](https://github.com/UB-Mannheim/tesseract/wiki) installed separately.
+
 ## Requirements
 
-- Python 3.13+
+- Python 3.13+ (if running from source)
 - [Tesseract OCR](https://github.com/tesseract-ocr/tesseract) (for text extraction)
 - An LLM backend (Ollama local, or OpenAI/Anthropic API key)
 
