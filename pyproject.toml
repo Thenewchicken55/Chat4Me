@@ -2,7 +2,7 @@
 name = "chat4me"
 version = "0.1.0"
 description = "Local-first AI agent that watches your Discord and chats for you"
-readme = "README.md"
+readme = "Readme.md"
 requires-python = ">=3.13"
 authors = [{ name = "Chat4Me" }]
 license = { text = "MIT" }

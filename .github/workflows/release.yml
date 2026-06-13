@@ -33,24 +33,15 @@ jobs:
           uv pip install pyinstaller
 
       - name: Build standalone executable
+        shell: pwsh
         run: |
-          uv run pyinstaller ^
-            --onefile ^
-            --console ^
-            --name chat4me ^
-            --add-data "config/config.yaml;config" ^
-            --hidden-import pyautogui ^
-            --hidden-import pynput ^
-            --hidden-import mss ^
-            --hidden-import pytesseract ^
-            --hidden-import cv2 ^
-            --hidden-import pydantic ^
-            --hidden-import pydantic_settings ^
-            --hidden-import yaml ^
-            --hidden-import loguru ^
-            --hidden-import httpx ^
-            --hidden-import PIL ^
-            --collect-all chat4me ^
+          uv run pyinstaller --onefile --console --name chat4me `
+            --add-data "config/config.yaml;config" `
+            --hidden-import pyautogui --hidden-import pynput --hidden-import mss `
+            --hidden-import pytesseract --hidden-import cv2 `
+            --hidden-import pydantic --hidden-import pydantic_settings `
+            --hidden-import yaml --hidden-import loguru --hidden-import httpx `
+            --hidden-import PIL --collect-all chat4me `
             src/chat4me/main.py
 
       - name: Create Release
