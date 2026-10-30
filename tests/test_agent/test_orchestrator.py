@@ -143,6 +143,39 @@ async def test_find_new_messages_empty_current(orchestrator):
     assert new == []
 
 
+@pytest.mark.asyncio
+async def test_find_new_messages_ignores_own_reply(orchestrator):
+    orchestrator.state.last_raw_text = "alice: hi"
+    orchestrator.state.remember_sent("haha yeah that's wild")
+    state = ScreenState(text_blocks=[], raw_text="alice: hi\nhaha yeah thats wild\nbob: same")
+    assert orchestrator._find_new_messages(state) == ["bob: same"]
+
+
+def test_remember_sent_is_bounded(orchestrator):
+    for i in range(25):
+        orchestrator.state.remember_sent(f"msg {i}")
+    assert len(orchestrator.state.sent_messages) == 10
+    assert orchestrator.state.sent_messages[-1] == "msg 24"
+
+
+@pytest.mark.asyncio
+async def test_switch_channel_does_not_click_wrong_channel(orchestrator, window):
+    from chat4me.vision.analyzer import TextBlock
+
+    channels = [TextBlock(text="general", left=10, top=100, width=50, height=10, confidence=90)]
+    with (
+        patch("chat4me.agent.orchestrator.capture_window"),
+        patch("chat4me.agent.orchestrator.is_tesseract_available", return_value=False),
+        patch("chat4me.agent.orchestrator.analyze"),
+        patch("chat4me.agent.orchestrator.find_channels", return_value=channels),
+        patch("chat4me.automation.mouse.click") as click,
+    ):
+        await orchestrator._switch_channel("#memes", window)
+        click.assert_not_called()
+        await orchestrator._switch_channel("#general", window)
+        click.assert_called_once()
+
+
 @patch("chat4me.agent.orchestrator.is_tesseract_available")
 @pytest.mark.asyncio
 async def test_orchestrator_warns_no_tesseract(mock_check, orchestrator):
