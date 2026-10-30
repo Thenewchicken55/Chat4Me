@@ -143,6 +143,18 @@ async def test_find_new_messages_empty_current(orchestrator):
     assert new == []
 
 
+@pytest.mark.asyncio
+async def test_send_reply_dry_run_does_not_type(orchestrator, window):
+    orchestrator.config.app.dry_run = True
+    with (
+        patch("chat4me.agent.orchestrator.type_and_send") as typer,
+        patch("chat4me.automation.mouse.click") as click,
+    ):
+        await orchestrator._send_reply("hello", window)
+    typer.assert_not_called()
+    click.assert_not_called()
+
+
 @patch("chat4me.agent.orchestrator.is_tesseract_available")
 @pytest.mark.asyncio
 async def test_orchestrator_warns_no_tesseract(mock_check, orchestrator):
