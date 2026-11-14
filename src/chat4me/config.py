@@ -56,6 +56,7 @@ class AppConfig(BaseSettings):
     cooldown_after_reply: float = 5.0
     max_consecutive_replies: int = 3
     target_window: str = "Discord"
+    dry_run: bool = False
 
 
 class ScreenConfig(BaseSettings):

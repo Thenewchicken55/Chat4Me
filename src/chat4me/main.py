@@ -53,6 +53,11 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         action="store_true",
         help="List visible windows and exit",
     )
+    parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="Generate replies and log them without clicking or typing",
+    )
     return parser.parse_args(argv)
 
 
@@ -108,6 +113,8 @@ def main(argv: list[str] | None = None) -> int:
         config.app.poll_interval = args.poll_interval
     if args.log_level:
         config.logging.level = args.log_level
+    if args.dry_run:
+        config.app.dry_run = True
 
     setup_logging(level=config.logging.level, log_file=config.logging.file)
 
