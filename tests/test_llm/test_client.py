@@ -87,6 +87,18 @@ class TestCreateClient:
         client = create_client(config)
         assert isinstance(client, AnthropicClient)
 
+    def test_openai_requires_api_key(self, config):
+        config.backend = "openai"
+        config.openai.api_key = ""
+        with pytest.raises(ValueError, match="openai.api_key"):
+            create_client(config)
+
+    def test_anthropic_requires_api_key(self, config):
+        config.backend = "anthropic"
+        config.anthropic.api_key = ""
+        with pytest.raises(ValueError, match="anthropic.api_key"):
+            create_client(config)
+
     def test_create_unknown(self, config):
         config.backend = "invalid"
         with pytest.raises(ValueError, match="Unknown LLM backend"):

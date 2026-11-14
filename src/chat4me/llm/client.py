@@ -114,8 +114,12 @@ def create_client(config: LLMConfig) -> LLMClient:
         case "ollama":
             return OllamaClient(config)
         case "openai":
+            if not config.openai.api_key:
+                raise ValueError("OpenAI backend selected but openai.api_key is empty")
             return OpenAIClient(config)
         case "anthropic":
+            if not config.anthropic.api_key:
+                raise ValueError("Anthropic backend selected but anthropic.api_key is empty")
             return AnthropicClient(config)
         case _:
             raise ValueError(f"Unknown LLM backend: {config.backend}")
