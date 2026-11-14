@@ -1,7 +1,8 @@
 from __future__ import annotations
 
 import asyncio
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from difflib import SequenceMatcher
 
 from loguru import logger
 
@@ -23,7 +24,26 @@ class AgentState:
     last_raw_text: str = ""
     consecutive_replies: int = 0
     running: bool = False
+    sent_messages: list[str] = field(default_factory=list)
     _tick_count: int = 0
+
+    def remember_sent(self, text: str, limit: int = 10) -> None:
+        """Record a reply we typed so OCR re-reading it isn't treated as a new message."""
+        self.sent_messages.append(text)
+        del self.sent_messages[:-limit]
+
+    def is_own_message(self, line: str) -> bool:
+        """Fuzzy-match an OCR line against our recent replies (OCR is rarely exact)."""
+        needle = line.strip().lower()
+        if not needle:
+            return False
+        for sent in self.sent_messages:
+            hay = sent.lower()
+            if len(needle) >= 4 and needle in hay:
+                return True
+            if SequenceMatcher(None, needle, hay).ratio() >= 0.85:
+                return True
+        return False
 
 
 class Orchestrator:
@@ -86,7 +106,10 @@ class Orchestrator:
             return []
 
         old_lines = set(self.state.last_raw_text.split("\n"))
-        new_lines = [line for line in current.split("\n") if line and line not in old_lines]
+        new_lines = [
+            line for line in current.split("\n")
+            if line and line not in old_lines and not self.state.is_own_message(line)
+        ]
         self.state.last_raw_text = current
         return new_lines
 
@@ -103,13 +126,12 @@ class Orchestrator:
             )
         state = analyze(img, ocr_data)
         channels = find_channels(state, window.width)
+        wanted = channel_name.lstrip("#").strip().lower()
         target = None
         for ch in channels:
-            if channel_name.lower() in ch.text.lower():
+            if wanted and wanted in ch.text.lower():
                 target = ch
                 break
-        if target is None and channels:
-            target = channels[0]
         if target:
             from chat4me.automation.mouse import click
             click(target.left + window.left, target.top + window.top)
@@ -145,6 +167,7 @@ class Orchestrator:
         click(chat_x, chat_y)
         await asyncio.sleep(0.3)
         type_and_send(reply)
+        self.state.remember_sent(reply)
 
     async def _tick(self) -> None:
         """Single iteration of the capture → analyze → decide → act loop."""
