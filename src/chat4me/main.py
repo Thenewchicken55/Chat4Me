@@ -53,6 +53,11 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         action="store_true",
         help="List visible windows and exit",
     )
+    parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="Generate replies and log them without clicking or typing",
+    )
     return parser.parse_args(argv)
 
 
@@ -81,13 +86,6 @@ def _print_emergency_banner() -> None:
     print("  and release all input devices.")
     print(line)
     print()
-    print(f"  Press  {EMERGENCY_STOP_HOTKEY.upper()}  at any time")
-    print("  to immediately stop the application.")
-    print()
-    print("  This will kill the agent, close the LLM client,")
-    print("  and release all input devices.")
-    print(line)
-    print()
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -108,6 +106,8 @@ def main(argv: list[str] | None = None) -> int:
         config.app.poll_interval = args.poll_interval
     if args.log_level:
         config.logging.level = args.log_level
+    if args.dry_run:
+        config.app.dry_run = True
 
     setup_logging(level=config.logging.level, log_file=config.logging.file)
 
@@ -125,15 +125,14 @@ def main(argv: list[str] | None = None) -> int:
         shutdown_event.set()
 
     def handle_emergency_stop() -> None:
+        # Runs on the pynput listener thread, so hand off to the event loop.
         logger.error("EMERGENCY STOP triggered via hotkey ({key})", key=EMERGENCY_STOP_HOTKEY)
-        shutdown_event.set()
+        loop.call_soon_threadsafe(shutdown_event.set)
 
+    loop = asyncio.new_event_loop()
     if sys.platform != "win32":
-        loop = asyncio.new_event_loop()
         for sig in (signal.SIGINT, signal.SIGTERM):
             loop.add_signal_handler(sig, handle_signal)
-    else:
-        loop = asyncio.new_event_loop()
 
     _hotkey_listener = keyboard.GlobalHotKeys({
         EMERGENCY_STOP_HOTKEY: handle_emergency_stop,

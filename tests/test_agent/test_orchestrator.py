@@ -174,6 +174,15 @@ async def test_switch_channel_does_not_click_wrong_channel(orchestrator, window)
         click.assert_not_called()
         await orchestrator._switch_channel("#general", window)
         click.assert_called_once()
+async def test_send_reply_dry_run_does_not_type(orchestrator, window):
+    orchestrator.config.app.dry_run = True
+    with (
+        patch("chat4me.agent.orchestrator.type_and_send") as typer,
+        patch("chat4me.automation.mouse.click") as click,
+    ):
+        await orchestrator._send_reply("hello", window)
+    typer.assert_not_called()
+    click.assert_not_called()
 
 
 @patch("chat4me.agent.orchestrator.is_tesseract_available")

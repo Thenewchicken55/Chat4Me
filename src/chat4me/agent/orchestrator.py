@@ -157,6 +157,9 @@ class Orchestrator:
 
     async def _send_reply(self, reply: str, window: WindowInfo) -> None:
         """Click the chat input area and type + send the reply."""
+        if self.config.app.dry_run:
+            logger.info("[dry-run] Would send: {reply}", reply=reply[:100])
+            return
         logger.info("Sending: {reply}", reply=reply[:100])
         chat_x = window.left + window.width // 2
         chat_y = window.top + window.height - 50

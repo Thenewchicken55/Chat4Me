@@ -73,6 +73,9 @@ chat4me --target-window "DiscordCanary" --llm-backend openai --poll-interval 3.0
 
 # Use a specific config + overrides
 chat4me -c myconfig.yaml --llm-backend anthropic
+
+# Preview replies in the log without clicking or typing
+chat4me --dry-run
 ```
 
 ## Configuration
