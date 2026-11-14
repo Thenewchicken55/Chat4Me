@@ -24,3 +24,7 @@ config/config.local.yaml
 *.log
 screenshots/
 tests/fixtures/generated/
+
+.coverage
+.pytest_cache/
+.ruff_cache/
